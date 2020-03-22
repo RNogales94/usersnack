@@ -3,17 +3,20 @@ from extra import Extra
 
 
 class Order:
-    def __init__(self, pizza=None, extras=[]):
+    def __init__(self, pizza=None, extras=[], name=None, address=None):
         self.pizza = pizza
         self.extras = extras
+        self.name = name
+        self.address = address
 
     @classmethod
     def load(cls, obj):
-        order = Order()
-        pizza = Pizza.load(obj['pizza'])
-        extras = [Extra.load(e) for e in obj['extras']]
-        order.pizza = pizza
-        order.extras = extras
+        order = Order(
+                    pizza=Pizza.load(obj['pizza']),
+                    extras=[Extra.load(e) for e in obj['extras']],
+                    name=obj['name'],
+                    address=obj['address']
+                    )
         return order
 
     def serialize(self):
@@ -22,6 +25,8 @@ class Order:
         obj = {
                     'pizza': self.pizza.serialize(),
                     'extras': [e.serialize() for e in self.extras],
+                    'name': self.name,
+                    'address': self.address
                 }
         return obj
 

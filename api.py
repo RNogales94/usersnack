@@ -1,4 +1,5 @@
-from flask import Flask, request, redirect, Response, abort
+from flask import Flask, request, Response, render_template
+
 import json
 import os
 
@@ -14,7 +15,7 @@ db = DB()
 
 @app.route("/")
 def index():
-    return Response(json.dumps({}), status=200)
+    return render_template('index.html')
 
 
 @app.route("/api/v1/pizzas/")
@@ -39,6 +40,7 @@ def extras():
     response = json.dumps([extra.serialize() for extra in extras])
     return Response(response, status=200, mimetype='application/json')
 
+
 @app.route("/api/v1/extra/<name>")
 def extra(name):
     extra = db.get_extra(name)
@@ -61,11 +63,34 @@ def get_orders():
 def register_order():
     raw_pizza = request.json.get('pizza')
     raw_extras = request.json.get('extras')
+    name = request.json.get('name')
+    address = request.json.get('address')
 
-    pizza = Pizza.load(raw_pizza)
-    extras = [Extra.load(e) for e in raw_extras]
+    if raw_pizza is None:
+        return Response(json.dumps({'error': '"pizza" field missing'}), status=400,
+                        mimetype='application/json')
+    if raw_extras is None:
+        return Response(json.dumps({'error': '"extras" field missing'}), status=400,
+                        mimetype='application/json')
+    if name is None:
+        return Response(json.dumps({'error': '"name" field missing'}), status=400,
+                        mimetype='application/json')
+    if address is None:
+        return Response(json.dumps({'error': '"address" field missing'}), status=400,
+                        mimetype='application/json')
 
-    order = Order(pizza=pizza, extras=extras)
+    try:
+        pizza = Pizza.load(raw_pizza)
+    except KeyError:
+        return Response(json.dumps({'error': 'Keyerror: Check "pizza" attributes'}), status=400, mimetype='application/json')
+
+    try:
+        extras = [Extra.load(e) for e in raw_extras]
+    except KeyError:
+        return Response(json.dumps({'error': 'Keyerror: Check "extras" attributes'}), status=400, mimetype='application/json')
+
+    order = Order(pizza=pizza, extras=extras, name=name, address=address)
+
     db.insert_order(order)
 
     return Response(json.dumps(order.serialize()), status=200, mimetype='application/json')

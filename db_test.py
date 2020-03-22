@@ -24,7 +24,7 @@ def test_insert_orders():
                   "name": "Cheese & Tomato",
                   "price": 11.90,
                   "ingredients": ["tomato", "cheese"],
-                  "img": "cheesetomato.jpg"
+                  "images": "cheesetomato.jpg"
                 })
     peppers = Extra({"name": "green peppers", "price": 1.2})
     mushrooms = Extra({"name": "mushrooms", "price": 1.2})
