@@ -18,6 +18,11 @@ def index():
     return render_template('index.html')
 
 
+@app.route("/order")
+def order():
+    return render_template('order.html')
+
+
 @app.route("/api/v1/pizzas/")
 def pizzas():
     pizzas = db.get_pizzas()
