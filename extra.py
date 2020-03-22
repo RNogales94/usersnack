@@ -1,9 +1,14 @@
 
 
 class Extra:
-    def __init__(self, dict):
-        self.name = dict['name']
-        self.price = dict['price']
+    def __init__(self, name=None, price=None):
+        self.name = name
+        self.price = price
+
+    @classmethod
+    def load(cls, obj):
+        extra = Extra(name=obj['name'], price=obj['price'])
+        return extra
 
     def to_dict(self):
         return {
