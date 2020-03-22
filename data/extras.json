@@ -1,7 +1,6 @@
 [
   {"name": "ham", "price": 2},
   {"name": "onion", "price": 1},
-  {"name": "bacon", "price": 2},
   {"name": "cheese", "price": 1.4},
   {"name": "green peppers", "price": 1.2},
   {"name": "mushrooms", "price": 1.2}
