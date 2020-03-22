@@ -45,7 +45,9 @@ class DB(metaclass=Singleton):
         return extras
 
     def get_extra(self, name):
-        raw = self.db.extras.find({'name': name}, {'_id': 0})
+        raw = self.db.extras.find_one({'name': name}, {'_id': 0})
+        if raw is None:
+            return None
         extra = Extra.load(raw)
         return extra
 

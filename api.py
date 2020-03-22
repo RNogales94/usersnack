@@ -35,12 +35,17 @@ def pizza(id):
 
 @app.route("/api/v1/extras/")
 def extras():
-    return Response(json.dumps([]), status=200)
-
+    extras = db.get_extras()
+    response = json.dumps([extra.serialize() for extra in extras])
+    return Response(response, status=200, mimetype='application/json')
 
 @app.route("/api/v1/extra/<name>")
 def extra(name):
-    return Response(json.dumps({"name": name, "price": 1.2}), status=200)
+    extra = db.get_extra(name)
+    if extra is None:
+        return Response(json.dumps({'error': f'extra name={name} not found'}), status=404, mimetype='application/json')
+
+    return Response(json.dumps(extra.serialize()), status=200, mimetype='application/json')
 
 
 @app.route("/api/v1/orders")
