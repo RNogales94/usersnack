@@ -10,7 +10,7 @@ class Extra:
         extra = Extra(name=obj['name'], price=obj['price'])
         return extra
 
-    def to_dict(self):
+    def serialize(self):
         return {
             'name': self.name,
             'price': self.price

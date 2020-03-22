@@ -18,7 +18,7 @@ class Pizza:
                       )
         return pizza
 
-    def to_dict(self):
+    def serialize(self):
         return {
                     'id': self.id,
                     'name': self.name,

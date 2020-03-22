@@ -16,8 +16,8 @@ class Order:
         order.extras = extras
         return order
 
-    def to_dict(self):
+    def serialize(self):
         return {
-                    'pizza': self.pizza.to_dict(),
-                    'extras': [e.to_dict() for e in self.extras],
+                    'pizza': self.pizza.serialize(),
+                    'extras': [e.serialize() for e in self.extras],
                 }
