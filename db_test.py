@@ -9,6 +9,15 @@ def test_get_pizzas():
     assert isinstance(DB().get_pizzas()[0], Pizza)
 
 
+def test_get_pizza():
+    assert isinstance(DB().get_pizza(id=4), Pizza)
+
+
+def test_get_orders():
+    assert isinstance(DB().get_orders(), list)
+    assert isinstance(DB().get_orders()[0], Order)
+
+
 def test_insert_orders():
     pizza = Pizza({
                   "id": 5,
@@ -21,6 +30,6 @@ def test_insert_orders():
     mushrooms = Extra({"name": "mushrooms", "price": 1.2})
     onion = Extra({"name": "onion", "price": 1})
 
-    order = Order({"pizza": pizza, "extras": [peppers, mushrooms, onion]})
+    order = Order(pizza=pizza, extras=[peppers, mushrooms, onion])
 
     assert DB().insert_order(order)

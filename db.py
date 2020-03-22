@@ -16,7 +16,7 @@ because we only will have to modify this file
 class DB(metaclass=Singleton):
     def __init__(self):
         mongo_uri = os.environ.get('MONGODB_URI',  'mongodb://heroku_q32gfzdw:t7ee55bddhloqev0bh77aqlm12@ds047114.mlab.com:47114/heroku_q32gfzdw')
-        self.db = pymongo.MongoClient(mongo_uri).get_database(os.environ.get('DB_NAME', 'heroku_q32gfzdw'))
+        self.db = pymongo.MongoClient(mongo_uri, retryWrites=False).get_database(os.environ.get('DB_NAME', 'heroku_q32gfzdw'))
 
     def __get_all_items(self, collection_name):
         return list(self.db[collection_name].find({}, {'_id': 0}))
@@ -28,7 +28,8 @@ class DB(metaclass=Singleton):
 
     def get_pizza(self, id):
         raw = self.db.pizzas.find({'id': id}, {'_id': 0})
-        return Pizza(raw)
+        pizza = Pizza(raw)
+        return pizza
 
     def get_extras(self):
         raw_extras = self.__get_all_items('extras')
@@ -42,11 +43,13 @@ class DB(metaclass=Singleton):
 
     def get_orders(self):
         raw_orders = self.__get_all_items('orders')
-        orders = [Order(raw_orders)]
+        orders = [Order.load(raw_order) for raw_order in raw_orders]
+        return orders
 
     def insert_order(self, order):
-        return self.db.orders.insert_one(order.to_dict().copy())
+        raw_order = order.serialize()
+        return self.db.orders.insert_one(raw_order.copy())
 
-    # We should have methods for insert/update pizzas and extras but we are not going to use them in the POC
+    # We should have methods for insert/update/delete in all but we are not going to use them in the POC
 
 

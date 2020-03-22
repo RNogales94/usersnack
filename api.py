@@ -2,8 +2,14 @@ from flask import Flask, request, redirect, Response, abort
 import json
 import os
 
+from pizza import Pizza
+from order import Order
+from extra import Extra
+
+from db import DB
 
 app = Flask(__name__)
+db = DB()
 
 
 @app.route("/")
@@ -37,20 +43,39 @@ def extra(name):
     return Response(json.dumps({"name": name, "price": 1.2}), status=200)
 
 
+@app.route("/api/v1/orders")
+def get_orders():
+
+    orders = db.get_orders()
+    response = json.dumps([o.serialize() for o in orders])
+
+    return Response(response=response, status=200, mimetype='application/json')
+
+
 @app.route("/api/v1/order", methods=['POST'])
 def register_order():
-    pizza = request.json.get('pizza')
-    extras = request.json.get('extras')
-    price = pizza.get('price') + sum([extra['price'] for extra in extras])
+    raw_pizza = request.json.get('pizza')
+    raw_extras = request.json.get('extras')
 
-    return Response(json.dumps({'pizza': pizza, 'extras': extras, "price": price}), status=200, mimetype='application/json')
+    pizza = Pizza.load(raw_pizza)
+    extras = [Extra.load(e) for e in raw_extras]
+
+    order = Order(pizza=pizza, extras=extras)
+    db.insert_order(order)
+
+    return Response(json.dumps(order.serialize()), status=200, mimetype='application/json')
 
 
-@app.route("/api/v1/order_price", methods=['POST'])
+@app.route("/api/v1/get-order-price", methods=['POST'])
 def order_price():
-    pizza = request.json.get('pizza')
-    extras = request.json.get('extras')
-    price = pizza.get('price') + sum([extra['price'] for extra in extras])
+    raw_pizza = request.json.get('pizza')
+    raw_extras = request.json.get('extras')
+
+    pizza = Pizza.load(raw_pizza)
+    extras = [Extra.load(e) for e in raw_extras]
+
+    order = Order(pizza=pizza, extras=extras)
+    price = order.get_total_price()
 
     return Response(json.dumps({"price": price}), status=200, mimetype='application/json')
 

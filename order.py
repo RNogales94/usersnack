@@ -10,14 +10,21 @@ class Order:
     @classmethod
     def load(cls, obj):
         order = Order()
-        pizza = Pizza(obj['pizza'])
-        extras = Extra(obj['extras'])
+        pizza = Pizza.load(obj['pizza'])
+        extras = [Extra.load(e) for e in obj['extras']]
         order.pizza = pizza
         order.extras = extras
         return order
 
     def serialize(self):
-        return {
+        print(self.pizza)
+        print(self.extras)
+        obj = {
                     'pizza': self.pizza.serialize(),
                     'extras': [e.serialize() for e in self.extras],
                 }
+        return obj
+
+    def get_total_price(self):
+        price = self.pizza.price + sum([extra.price for extra in self.extras])
+        return price
