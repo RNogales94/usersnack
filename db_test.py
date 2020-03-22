@@ -30,6 +30,6 @@ def test_insert_orders():
     mushrooms = Extra({"name": "mushrooms", "price": 1.2})
     onion = Extra({"name": "onion", "price": 1})
 
-    order = Order(pizza=pizza, extras=[peppers, mushrooms, onion])
+    order = Order(pizza=pizza, extras=[peppers, mushrooms, onion], name="Fake Name", address="Fake Street 123")
 
     assert DB().insert_order(order)
