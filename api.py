@@ -11,7 +11,7 @@ def index():
     return Response(json.dumps({}), status=200)
 
 
-@app.route("/api/v1/pizza/")
+@app.route("/api/v1/pizzas/")
 def pizzas():
     return Response(json.dumps([]), status=200)
 
@@ -27,7 +27,7 @@ def pizza(id):
                                 }), status=200)
 
 
-@app.route("/api/v1/extra/")
+@app.route("/api/v1/extras/")
 def extras():
     return Response(json.dumps([]), status=200)
 
@@ -53,6 +53,7 @@ def order_price():
     price = pizza.get('price') + sum([extra['price'] for extra in extras])
 
     return Response(json.dumps({"price": price}), status=200, mimetype='application/json')
+
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
