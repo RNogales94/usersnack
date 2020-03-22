@@ -23,22 +23,30 @@ class DB(metaclass=Singleton):
 
     def get_pizzas(self):
         raw_pizzas = self.__get_all_items('pizzas')
-        pizzas = [Pizza(p) for p in raw_pizzas]
+        pizzas = [Pizza.load(p) for p in raw_pizzas]
         return pizzas
 
     def get_pizza(self, id):
-        raw = self.db.pizzas.find({'id': id}, {'_id': 0})
-        pizza = Pizza(raw)
+        try:
+            id = int(id)
+        except ValueError:
+            return None
+
+        raw = self.db.pizzas.find_one({'id': int(id)}, {'_id': 0})
+        if raw is None:
+            return None
+        pizza = Pizza.load(raw)
+
         return pizza
 
     def get_extras(self):
         raw_extras = self.__get_all_items('extras')
-        extras = [Extra(e) for e in raw_extras]
+        extras = [Extra.load(e) for e in raw_extras]
         return extras
 
     def get_extra(self, name):
         raw = self.db.extras.find({'name': name}, {'_id': 0})
-        extra = Extra(raw)
+        extra = Extra.load(raw)
         return extra
 
     def get_orders(self):

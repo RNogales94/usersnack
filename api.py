@@ -19,18 +19,18 @@ def index():
 
 @app.route("/api/v1/pizzas/")
 def pizzas():
-    return Response(json.dumps([]), status=200)
+    pizzas = db.get_pizzas()
+    response = json.dumps([pizza.serialize() for pizza in pizzas])
+    return Response(response, status=200, mimetype='application/json')
 
 
 @app.route("/api/v1/pizza/<id>")
 def pizza(id):
-    return Response(json.dumps({
-                                  "id": id,
-                                  "name": "Cheese & Tomato",
-                                  "price": 11.90,
-                                  "ingredients": ["tomato", "cheese"],
-                                  "img": "cheesetomato.jpg"
-                                }), status=200)
+    pizza = db.get_pizza(id)
+    if pizza is None:
+        return Response(json.dumps({'error': f'pizza id={id} not found'}), status=404, mimetype='application/json')
+
+    return Response(json.dumps(pizza.serialize()), status=200, mimetype='application/json')
 
 
 @app.route("/api/v1/extras/")
