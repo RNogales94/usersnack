@@ -1,7 +1,7 @@
 
 
 function loadPizza(id){
-    fetch('/api/v1/pizza/'+id)
+    fetch('https://rnog-usersnack.herokuapp.com/api/v1/pizza/'+id)
     .then(response => response.json())
     .then(pizza => {
         let menu_panel = document.getElementById('selected-pizza');
